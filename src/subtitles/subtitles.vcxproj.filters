@@ -209,5 +209,5 @@
     <ClInclude Include="xy_circular_array_queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
+</ItemGroup>
 </Project>

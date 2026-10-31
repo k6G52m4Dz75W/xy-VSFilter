@@ -169,6 +169,7 @@ protected:
     virtual void OnChanged() {}
 
 public:
+    bool           m_simple;
     CString        m_name;
     LCID           m_lcid;
     tmode          m_mode;
@@ -179,6 +180,7 @@ public:
     int            m_defaultWrapStyle;
     int            m_collisions;
     bool           m_fScaledBAS;
+    CSize          m_layout_size;
 
     CSTSStyleMap   m_styles;
 
@@ -200,6 +202,7 @@ public:
     {
         YCbCrMatrix_BT601,
         YCbCrMatrix_BT709,
+        YCbCrMatrix_BT2020,
         YCbCrMatrix_AUTO
     };
     enum YCbCrRange

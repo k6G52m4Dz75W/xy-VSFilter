@@ -44,7 +44,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../include/dx;../Filters/BaseClasses;$(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include/dx;../Filters/BaseClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Lib>
@@ -61,14 +61,6 @@
     <ClCompile Include="CoordGeom.cpp" />
     <ClCompile Include="CRect2.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="DX7SubPic.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release log|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release log|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="DX9SubPic.cpp" />
     <ClCompile Include="MemSubPic.cpp" />
@@ -94,7 +86,6 @@
     <ClInclude Include="color_conv_table.h" />
     <ClInclude Include="CoordGeom.h" />
     <ClInclude Include="CRect2.h" />
-    <ClInclude Include="DX7SubPic.h" />
     <ClInclude Include="DX9SubPic.h" />
     <ClInclude Include="ISimpleSubPic.h" />
     <ClInclude Include="ISubPic.h" />

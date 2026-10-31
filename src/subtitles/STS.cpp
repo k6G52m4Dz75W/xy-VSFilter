@@ -288,7 +288,8 @@ static void LogStyles(const CSTSStyleMap& styles)
 static DWORD CharSetToCodePage(DWORD dwCharSet)
 {
     CHARSETINFO cs={0};
-    ::TranslateCharsetInfo((DWORD *)dwCharSet, &cs, TCI_SRCCHARSET);
+    DWORD_PTR dwcp = intptr_t(dwCharSet);
+    ::TranslateCharsetInfo((DWORD *)dwcp, &cs, TCI_SRCCHARSET);
     return cs.ciACP;
 }
 
@@ -535,8 +536,8 @@ static bool OpenSubRipper(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet
         int hh1, mm1, ss1, ms1, hh2, mm2, ss2, ms2;
         WCHAR msStr1[5] = {0}, msStr2[5] = {0};
         int c = swscanf_s(buff, L"%d%c%d%c%d%4[^-] --> %d%c%d%c%d%4s\n",
-                          &hh1, &sep, 1, &mm1, &sep, 1, &ss1, msStr1, _countof(msStr1),
-                          &hh2, &sep, 1, &mm2, &sep, 1, &ss2, msStr2, _countof(msStr2));
+                          &hh1, &sep, 1, &mm1, &sep, 1, &ss1, msStr1, (unsigned int)_countof(msStr1),
+                          &hh2, &sep, 1, &mm2, &sep, 1, &ss2, msStr2, (unsigned int)_countof(msStr2));
 
         if (c == 1) { // numbering
             num = hh1;
@@ -1583,6 +1584,16 @@ if(sver <= 4)   style->scrAlignment = (style->scrAlignment&4) ? ((style->scrAlig
                     : ret.m_dstScreenSize.cy * 4 / 3;
             }
         }
+        else if(entry == L"layoutresx")
+        {
+            try {ret.m_layout_size.cx = GetInt(buff);}
+            catch(...) {ret.m_layout_size = CSize(0, 0); return(false);}
+        }
+        else if(entry == L"layoutresy")
+        {
+            try {ret.m_layout_size.cy = GetInt(buff);}
+            catch(...) {ret.m_layout_size = CSize(0, 0); return(false);}
+        }
         else if(entry == L"wrapstyle")
         {
             try {ret.m_defaultWrapStyle = GetInt(buff);}
@@ -1648,6 +1659,11 @@ if(sver <= 4)   style->scrAlignment = (style->scrAlignment&4) ? ((style->scrAlig
                 ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
                 ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
             }
+            else if (buff.Left(7)==L"tv.2020")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+            }
             else if (buff.Left(6)==L"pc.601")
             {
                 ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
@@ -1656,6 +1672,11 @@ if(sver <= 4)   style->scrAlignment = (style->scrAlignment&4) ? ((style->scrAlig
             else if (buff.Left(6)==L"pc.709")
             {
                 ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+            }
+            else if (buff.Left(7)==L"pc.2020")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
                 ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
             }
         }
@@ -2737,6 +2758,7 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
         m_mode = OpenFuncts[i].mode;
         m_encoding = f->GetEncoding();
         m_path = f->GetFilePath();
+        m_simple = i > 0;
 
         CWebTextFile f2(CTextFile::UTF8);
         if(f2.Open(f->GetFilePath() + _T(".style")))
